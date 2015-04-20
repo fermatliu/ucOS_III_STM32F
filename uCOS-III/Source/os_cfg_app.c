@@ -10,7 +10,7 @@
 *
 * File    : OS_CFG_APP.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -239,61 +239,65 @@ CPU_INT32U     const  OSCfg_DataSizeRAM          = sizeof(OSCfg_IdleTaskStk)
 
 void  OSCfg_Init (void)
 {
-    (void)&OSCfg_DataSizeRAM;
+    void const *p_temp;
 
-    (void)&OSCfg_IdleTaskStkBasePtr;
-    (void)&OSCfg_IdleTaskStkLimit;
-    (void)&OSCfg_IdleTaskStkSize;
-    (void)&OSCfg_IdleTaskStkSizeRAM;
+
+    p_temp = (void const *)&OSCfg_DataSizeRAM;
+
+    p_temp = (void const *)&OSCfg_IdleTaskStkBasePtr;
+    p_temp = (void const *)&OSCfg_IdleTaskStkLimit;
+    p_temp = (void const *)&OSCfg_IdleTaskStkSize;
+    p_temp = (void const *)&OSCfg_IdleTaskStkSizeRAM;
 
 #if (OS_CFG_ISR_POST_DEFERRED_EN > 0u)
-    (void)&OSCfg_IntQBasePtr;
-    (void)&OSCfg_IntQSize;
-    (void)&OSCfg_IntQSizeRAM;
-    (void)&OSCfg_IntQTaskStkBasePtr;
-    (void)&OSCfg_IntQTaskStkLimit;
-    (void)&OSCfg_IntQTaskStkSize;
-    (void)&OSCfg_IntQTaskStkSizeRAM;
+    p_temp = (void const *)&OSCfg_IntQBasePtr;
+    p_temp = (void const *)&OSCfg_IntQSize;
+    p_temp = (void const *)&OSCfg_IntQSizeRAM;
+    p_temp = (void const *)&OSCfg_IntQTaskStkBasePtr;
+    p_temp = (void const *)&OSCfg_IntQTaskStkLimit;
+    p_temp = (void const *)&OSCfg_IntQTaskStkSize;
+    p_temp = (void const *)&OSCfg_IntQTaskStkSizeRAM;
 #endif
 
-    (void)&OSCfg_ISRStkBasePtr;
-    (void)&OSCfg_ISRStkSize;
-    (void)&OSCfg_ISRStkSizeRAM;
+    p_temp = (void const *)&OSCfg_ISRStkBasePtr;
+    p_temp = (void const *)&OSCfg_ISRStkSize;
+    p_temp = (void const *)&OSCfg_ISRStkSizeRAM;
 
 #if (OS_MSG_EN > 0u)
-    (void)&OSCfg_MsgPoolSize;
-    (void)&OSCfg_MsgPoolSizeRAM;
-    (void)&OSCfg_MsgPoolBasePtr;
+    p_temp = (void const *)&OSCfg_MsgPoolSize;
+    p_temp = (void const *)&OSCfg_MsgPoolSizeRAM;
+    p_temp = (void const *)&OSCfg_MsgPoolBasePtr;
 #endif
 
 #if (OS_CFG_STAT_TASK_EN > 0u)
-    (void)&OSCfg_StatTaskPrio;
-    (void)&OSCfg_StatTaskRate_Hz;
-    (void)&OSCfg_StatTaskStkBasePtr;
-    (void)&OSCfg_StatTaskStkLimit;
-    (void)&OSCfg_StatTaskStkSize;
-    (void)&OSCfg_StatTaskStkSizeRAM;
+    p_temp = (void const *)&OSCfg_StatTaskPrio;
+    p_temp = (void const *)&OSCfg_StatTaskRate_Hz;
+    p_temp = (void const *)&OSCfg_StatTaskStkBasePtr;
+    p_temp = (void const *)&OSCfg_StatTaskStkLimit;
+    p_temp = (void const *)&OSCfg_StatTaskStkSize;
+    p_temp = (void const *)&OSCfg_StatTaskStkSizeRAM;
 #endif
 
-    (void)&OSCfg_StkSizeMin;
+    p_temp = (void const *)&OSCfg_StkSizeMin;
 
-    (void)&OSCfg_TickRate_Hz;
-    (void)&OSCfg_TickTaskPrio;
-    (void)&OSCfg_TickTaskStkBasePtr;
-    (void)&OSCfg_TickTaskStkLimit;
-    (void)&OSCfg_TickTaskStkSize;
-    (void)&OSCfg_TickTaskStkSizeRAM;
-    (void)&OSCfg_TickWheelSize;
-    (void)&OSCfg_TickWheelSizeRAM;
+    p_temp = (void const *)&OSCfg_TickRate_Hz;
+    p_temp = (void const *)&OSCfg_TickTaskPrio;
+    p_temp = (void const *)&OSCfg_TickTaskStkBasePtr;
+    p_temp = (void const *)&OSCfg_TickTaskStkLimit;
+    p_temp = (void const *)&OSCfg_TickTaskStkSize;
+    p_temp = (void const *)&OSCfg_TickTaskStkSizeRAM;
+    p_temp = (void const *)&OSCfg_TickWheelSize;
+    p_temp = (void const *)&OSCfg_TickWheelSizeRAM;
 
 #if (OS_CFG_TMR_EN > 0u)
-    (void)&OSCfg_TmrTaskPrio;
-    (void)&OSCfg_TmrTaskRate_Hz;
-    (void)&OSCfg_TmrTaskStkBasePtr;
-    (void)&OSCfg_TmrTaskStkLimit;
-    (void)&OSCfg_TmrTaskStkSize;
-    (void)&OSCfg_TmrTaskStkSizeRAM;
-    (void)&OSCfg_TmrWheelSize;
-    (void)&OSCfg_TmrWheelSizeRAM;
+    p_temp = (void const *)&OSCfg_TmrTaskPrio;
+    p_temp = (void const *)&OSCfg_TmrTaskRate_Hz;
+    p_temp = (void const *)&OSCfg_TmrTaskStkBasePtr;
+    p_temp = (void const *)&OSCfg_TmrTaskStkLimit;
+    p_temp = (void const *)&OSCfg_TmrTaskStkSize;
+    p_temp = (void const *)&OSCfg_TmrTaskStkSizeRAM;
+    p_temp = (void const *)&OSCfg_TmrWheelSize;
+    p_temp = (void const *)&OSCfg_TmrWheelSizeRAM;
 #endif
+    p_temp = p_temp;
 }

@@ -10,7 +10,7 @@
 *
 * File    : OS_STAT.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -64,8 +64,8 @@ void  OSStatReset (OS_ERR  *p_err)
 #if (OS_CFG_Q_EN > 0u)
     OS_Q        *p_q;
 #endif
-#endif
     CPU_SR_ALLOC();
+#endif
 
 
 
@@ -102,7 +102,7 @@ void  OSStatReset (OS_ERR  *p_err)
 #endif
 
 #if OS_MSG_EN > 0u
-    OSMsgPool.NbrUsedMax  = 0u;
+    OSMsgPool.NbrUsedMax  = 0;
 #endif
     CPU_CRITICAL_EXIT();
 

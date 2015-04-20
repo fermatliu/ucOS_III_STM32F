@@ -10,7 +10,7 @@
 *
 * File    : OS_MUTEX.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -423,8 +423,8 @@ void  OSMutexPend (OS_MUTEX  *p_mutex,
             return;
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();
+
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
     p_tcb = p_mutex->OwnerTCBPtr;                           /* Point to the TCB of the Mutex owner                    */
     if (p_tcb->Prio > OSTCBCurPtr->Prio) {                  /* See if mutex owner has a lower priority than current   */
         switch (p_tcb->TaskState) {
@@ -594,7 +594,7 @@ OS_OBJ_QTY  OSMutexPendAbort (OS_MUTEX  *p_mutex,
         return ((OS_OBJ_QTY)0u);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     nbr_tasks = 0u;
     ts        = OS_TS_GET();                                /* Get local time stamp so all tasks get the same time    */
     while (p_pend_list->NbrEntries > (OS_OBJ_QTY)0u) {
@@ -700,7 +700,7 @@ void  OSMutexPost (OS_MUTEX  *p_mutex,
         return;
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     ts          = OS_TS_GET();                              /* Get timestamp                                          */
     p_mutex->TS = ts;
     p_mutex->OwnerNestingCtr--;                             /* Decrement owner's nesting counter                      */

@@ -10,7 +10,7 @@
 *
 * File    : OS_DBG.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -37,7 +37,7 @@
 const  CPU_CHAR  *os_dbg__c = "$Id: $";
 #endif
 
-CPU_INT08U  const  OSDbg_DbgEn                 = OS_CFG_DBG_EN;                /* Debug constants are defined below   */
+CPU_INT16U  const  OSDbg_DbgEn                 = OS_CFG_DBG_EN;                /* Debug constants are defined below   */
 
 #if OS_CFG_DBG_EN > 0u
 
@@ -87,13 +87,12 @@ CPU_INT16U  const  OSDbg_MemSize               = 0u;
 #endif
 
 
+CPU_INT08U  const  OSDbg_MsgEn                 = OS_MSG_EN;
 #if (OS_MSG_EN) > 0u
-CPU_INT08U  const  OSDbg_MsgEn                 = 1u;
 CPU_INT16U  const  OSDbg_MsgSize               = sizeof(OS_MSG);               /* OS_MSG size                         */
 CPU_INT16U  const  OSDbg_MsgPoolSize           = sizeof(OS_MSG_POOL);
 CPU_INT16U  const  OSDbg_MsgQSize              = sizeof(OS_MSG_Q);
 #else
-CPU_INT08U  const  OSDbg_MsgEn                 = 0u;
 CPU_INT16U  const  OSDbg_MsgSize               = 0u;
 CPU_INT16U  const  OSDbg_MsgPoolSize           = 0u;
 CPU_INT16U  const  OSDbg_MsgQSize              = 0u;
@@ -369,128 +368,124 @@ CPU_INT32U  const  OSDbg_DataSize = sizeof(OSIntNestingCtr)
 
 void  OS_Dbg_Init (void)
 {
-    CPU_INT08U const  *p_temp08;
-    CPU_INT16U const  *p_temp16;
-    CPU_INT32U const  *p_temp32;
+    void  const  *p_temp;
 
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_DbgEn;
+    p_temp = (void const *)&OSDbg_DbgEn;
 
-    p_temp32 = (CPU_INT32U const *)&OSDbg_DataSize;
+    p_temp = (void const *)&OSDbg_DataSize;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_ArgChkEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_AppHooksEn;
+    p_temp = (void const *)&OSDbg_ArgChkEn;
+    p_temp = (void const *)&OSDbg_AppHooksEn;
 
-    p_temp32 = (CPU_INT32U const *)&OSDbg_EndiannessTest;
+    p_temp = (void const *)&OSDbg_EndiannessTest;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_CalledFromISRChkEn;
+    p_temp = (void const *)&OSDbg_CalledFromISRChkEn;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_FlagGrp;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_FlagEn;
+    p_temp = (void const *)&OSDbg_FlagGrp;
+    p_temp = (void const *)&OSDbg_FlagEn;
 #if OS_CFG_FLAG_EN > 0u
-    p_temp08 = (CPU_INT08U const *)&OSDbg_FlagDelEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_FlagModeClrEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_FlagPendAbortEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_FlagGrpSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_FlagWidth;
+    p_temp = (void const *)&OSDbg_FlagDelEn;
+    p_temp = (void const *)&OSDbg_FlagModeClrEn;
+    p_temp = (void const *)&OSDbg_FlagPendAbortEn;
+    p_temp = (void const *)&OSDbg_FlagGrpSize;
+    p_temp = (void const *)&OSDbg_FlagWidth;
 #endif
 
 #if OS_CFG_ISR_POST_DEFERRED_EN > 0u
-    p_temp16 = (CPU_INT16U const *)&OSDbg_IntQ;
+    p_temp = (void const *)&OSDbg_IntQ;
 #endif
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_ISRPostDeferredEn;
+    p_temp = (void const *)&OSDbg_ISRPostDeferredEn;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_Mem;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_MemEn;
+    p_temp = (void const *)&OSDbg_Mem;
+    p_temp = (void const *)&OSDbg_MemEn;
 #if OS_CFG_MEM_EN > 0u
-    p_temp16 = (CPU_INT16U const *)&OSDbg_MemSize;
+    p_temp = (void const *)&OSDbg_MemSize;
 #endif
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_MsgEn;
+    p_temp = (void const *)&OSDbg_MsgEn;
 #if (OS_MSG_EN) > 0u
-    p_temp16 = (CPU_INT16U const *)&OSDbg_MsgSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_MsgPoolSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_MsgQSize;
+    p_temp = (void const *)&OSDbg_MsgSize;
+    p_temp = (void const *)&OSDbg_MsgPoolSize;
+    p_temp = (void const *)&OSDbg_MsgQSize;
 #endif
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_Mutex;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_MutexEn;
+    p_temp = (void const *)&OSDbg_Mutex;
+    p_temp = (void const *)&OSDbg_MutexEn;
 #if (OS_CFG_MUTEX_EN) > 0u
-    p_temp08 = (CPU_INT08U const *)&OSDbg_MutexDelEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_MutexPendAbortEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_MutexSize;
+    p_temp = (void const *)&OSDbg_MutexDelEn;
+    p_temp = (void const *)&OSDbg_MutexPendAbortEn;
+    p_temp = (void const *)&OSDbg_MutexSize;
 #endif
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_ObjTypeChkEn;
+    p_temp = (void const *)&OSDbg_ObjTypeChkEn;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_PendMultiEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PendDataSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PendListSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PendObjSize;
+    p_temp = (void const *)&OSDbg_PendMultiEn;
+    p_temp = (void const *)&OSDbg_PendDataSize;
+    p_temp = (void const *)&OSDbg_PendListSize;
+    p_temp = (void const *)&OSDbg_PendObjSize;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PrioMax;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PrioTblSize;
+    p_temp = (void const *)&OSDbg_PrioMax;
+    p_temp = (void const *)&OSDbg_PrioTblSize;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_PtrSize;
+    p_temp = (void const *)&OSDbg_PtrSize;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_Q;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_QEn;
+    p_temp = (void const *)&OSDbg_Q;
+    p_temp = (void const *)&OSDbg_QEn;
 #if (OS_CFG_Q_EN) > 0u
-    p_temp08 = (CPU_INT08U const *)&OSDbg_QDelEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_QFlushEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_QPendAbortEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_QSize;
+    p_temp = (void const *)&OSDbg_QDelEn;
+    p_temp = (void const *)&OSDbg_QFlushEn;
+    p_temp = (void const *)&OSDbg_QPendAbortEn;
+    p_temp = (void const *)&OSDbg_QSize;
 #endif
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_SchedRoundRobinEn;
+    p_temp = (void const *)&OSDbg_SchedRoundRobinEn;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_Sem;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_SemEn;
+    p_temp = (void const *)&OSDbg_Sem;
+    p_temp = (void const *)&OSDbg_SemEn;
 #if (OS_CFG_SEM_EN) > 0u
-    p_temp08 = (CPU_INT08U const *)&OSDbg_SemDelEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_SemPendAbortEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_SemSetEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_SemSize;
+    p_temp = (void const *)&OSDbg_SemDelEn;
+    p_temp = (void const *)&OSDbg_SemPendAbortEn;
+    p_temp = (void const *)&OSDbg_SemSetEn;
+    p_temp = (void const *)&OSDbg_SemSize;
 #endif
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_RdyList;
-    p_temp32 = (CPU_INT32U const *)&OSDbg_RdyListSize;
+    p_temp = (void const *)&OSDbg_RdyList;
+    p_temp = (void const *)&OSDbg_RdyListSize;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_StkWidth;
+    p_temp = (void const *)&OSDbg_StkWidth;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_StatTaskEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_StatTaskStkChkEn;
+    p_temp = (void const *)&OSDbg_StatTaskEn;
+    p_temp = (void const *)&OSDbg_StatTaskStkChkEn;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskChangePrioEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskDelEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskQEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskQPendAbortEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskProfileEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_TaskRegTblSize;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskSemPendAbortEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TaskSuspendEn;
+    p_temp = (void const *)&OSDbg_TaskChangePrioEn;
+    p_temp = (void const *)&OSDbg_TaskDelEn;
+    p_temp = (void const *)&OSDbg_TaskQEn;
+    p_temp = (void const *)&OSDbg_TaskQPendAbortEn;
+    p_temp = (void const *)&OSDbg_TaskProfileEn;
+    p_temp = (void const *)&OSDbg_TaskRegTblSize;
+    p_temp = (void const *)&OSDbg_TaskSemPendAbortEn;
+    p_temp = (void const *)&OSDbg_TaskSuspendEn;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_TCBSize;
+    p_temp = (void const *)&OSDbg_TCBSize;
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_TickSpokeSize;
+    p_temp = (void const *)&OSDbg_TickSpokeSize;
 
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TimeDlyHMSMEn;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TimeDlyResumeEn;
+    p_temp = (void const *)&OSDbg_TimeDlyHMSMEn;
+    p_temp = (void const *)&OSDbg_TimeDlyResumeEn;
 
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_Tmr;
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TmrEn;
+    p_temp = (void const *)&OSDbg_Tmr;
+    p_temp = (void const *)&OSDbg_TmrEn;
 #if (OS_CFG_TMR_EN) > 0u
-    p_temp08 = (CPU_INT08U const *)&OSDbg_TmrDelEn;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_TmrSize;
-    p_temp16 = (CPU_INT16U const *)&OSDbg_TmrSpokeSize;
+    p_temp = (void const *)&OSDbg_TmrDelEn;
+    p_temp = (void const *)&OSDbg_TmrSize;
+    p_temp = (void const *)&OSDbg_TmrSpokeSize;
 #endif
 
-    p_temp16 = (CPU_INT16U const *)&OSDbg_VersionNbr;
+    p_temp = (void const *)&OSDbg_VersionNbr;
 
-    p_temp08 = p_temp08;                                     /* Prevent compiler warning for not using 'p_temp'        */
-    p_temp16 = p_temp16;
-    p_temp32 = p_temp32;
+    p_temp = p_temp;                                        /* Prevent compiler warning for not using 'p_temp'        */
 }
 #endif

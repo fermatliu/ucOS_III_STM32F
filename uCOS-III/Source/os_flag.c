@@ -10,7 +10,7 @@
 *
 * File    : OS_FLAG.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -416,8 +416,8 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
                          return ((OS_FLAGS)0);
                      }
                  }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-                 OS_CRITICAL_ENTER_CPU_EXIT();              
+                                                            
+                 OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();     /* Lock the scheduler/re-enable interrupts                */
                  OS_FlagBlock(&pend_data,
                               p_grp,
                               flags,
@@ -452,8 +452,8 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
                          return ((OS_FLAGS)0);
                      }
                  }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-                 OS_CRITICAL_ENTER_CPU_EXIT();              
+                                                            
+                 OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();     /* Lock the scheduler/re-enable interrupts                */
                  OS_FlagBlock(&pend_data,
                               p_grp,
                               flags,
@@ -490,7 +490,7 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
                      }
                  }
                                                             
-                 OS_CRITICAL_ENTER_CPU_EXIT();              /* Lock the scheduler/re-enable interrupts                */
+                 OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();     /* Lock the scheduler/re-enable interrupts                */
                  OS_FlagBlock(&pend_data,
                               p_grp,
                               flags,
@@ -526,8 +526,8 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
                      }
                  }
                                                             
-                 OS_CRITICAL_ENTER_CPU_EXIT();              /* Lock the scheduler/re-enable interrupts                */
-                 OS_FlagBlock(&pend_data,              
+                 OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();     /* Lock the scheduler/re-enable interrupts                */
+                 OS_FlagBlock(&pend_data,
                               p_grp,
                               flags,
                               opt,
@@ -560,7 +560,7 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
              }
              CPU_CRITICAL_EXIT();
             *p_err = OS_ERR_PEND_ABORT;
-             break;
+             return ((OS_FLAGS)0);
 
         case OS_STATUS_PEND_TIMEOUT:                        /* Indicate that we didn't get semaphore within timeout   */
              if (p_ts != (CPU_TS *)0) {
@@ -568,7 +568,7 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
              }
              CPU_CRITICAL_EXIT();
             *p_err = OS_ERR_TIMEOUT;
-             break;
+             return ((OS_FLAGS)0);
 
         case OS_STATUS_PEND_DEL:                            /* Indicate that object pended on has been deleted        */
              if (p_ts != (CPU_TS *)0) {
@@ -576,15 +576,12 @@ OS_FLAGS  OSFlagPend (OS_FLAG_GRP  *p_grp,
              }
              CPU_CRITICAL_EXIT();
             *p_err = OS_ERR_OBJ_DEL;
-             break;
+             return ((OS_FLAGS)0);
 
         default:
              CPU_CRITICAL_EXIT();
             *p_err = OS_ERR_STATUS_INVALID;
-             break;
-    }
-    if (*p_err != OS_ERR_NONE) {
-        return ((OS_FLAGS)0);
+             return ((OS_FLAGS)0);
     }
 
     flags_rdy = OSTCBCurPtr->FlagsRdy;
@@ -706,7 +703,7 @@ OS_OBJ_QTY  OSFlagPendAbort (OS_FLAG_GRP  *p_grp,
         return ((OS_OBJ_QTY)0u);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     nbr_tasks = 0u;
     ts        = OS_TS_GET();                                /* Get local time stamp so all tasks get the same time    */
     while (p_pend_list->NbrEntries > (OS_OBJ_QTY)0u) {
@@ -1148,7 +1145,7 @@ OS_FLAGS  OS_FlagPost (OS_FLAG_GRP  *p_grp,
         return (p_grp->Flags);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     p_pend_data = p_pend_list->HeadPtr;
     p_tcb       = p_pend_data->TCBPtr;
     while (p_tcb != (OS_TCB *)0) {                              /* Go through all tasks waiting on event flag(s)      */

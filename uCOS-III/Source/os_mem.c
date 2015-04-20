@@ -10,7 +10,7 @@
 *
 * File    : OS_MEM.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -125,7 +125,7 @@ void  OSMemCreate (OS_MEM       *p_mem,
         return;
     }
     align_msk = sizeof(void *) - 1u;
-    if (align_msk > 0u) {
+    if (align_msk > 0) {
         if (((CPU_ADDR)p_addr & align_msk) != 0u){          /* Must be pointer size aligned                           */
            *p_err = OS_ERR_MEM_INVALID_P_ADDR;
             return;

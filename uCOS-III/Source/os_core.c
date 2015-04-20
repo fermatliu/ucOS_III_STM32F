@@ -10,7 +10,7 @@
 *
 * File    : OS_CORE.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -1674,7 +1674,7 @@ void  OS_PendListRemove1 (OS_PEND_LIST  *p_pend_list,
 ************************************************************************************************************************
 *                                READY A TASK THAT WAS PENDING ON AN OBJECT BEING DELETED
 *
-* Description: This function is called to make a task ready-to-run because an object is being deleted
+* Description: This function is called when a object is to make a task ready-to-run.
 *
 * Arguments  : p_obj          is a pointer to the object being deleted
 *              -----
@@ -1716,7 +1716,7 @@ void  OS_PendObjDel (OS_PEND_OBJ  *p_obj,
              OS_PendListRemove(p_tcb);                           /* Remove task from all wait lists                   */
              OS_TaskRdy(p_tcb);
              p_tcb->TaskState  = OS_TASK_STATE_RDY;              /* Task is readied because object is deleted         */
-             p_tcb->PendStatus = OS_STATUS_PEND_DEL;             
+             p_tcb->PendStatus = OS_STATUS_PEND_DEL;             /* Indicate pend was aborted                         */
              p_tcb->PendOn     = OS_TASK_PEND_ON_NOTHING;
              break;
 
@@ -1735,7 +1735,7 @@ void  OS_PendObjDel (OS_PEND_OBJ  *p_obj,
              OS_TickListRemove(p_tcb);                           /* Cancel the timeout                                */
              OS_PendListRemove(p_tcb);                           /* Remove task from all wait lists                   */
              p_tcb->TaskState  = OS_TASK_STATE_SUSPENDED;        /* Task needs to remain suspended                    */
-             p_tcb->PendStatus = OS_STATUS_PEND_DEL;             
+             p_tcb->PendStatus = OS_STATUS_PEND_DEL;             /* Indicate pend was aborted                         */
              p_tcb->PendOn     = OS_TASK_PEND_ON_NOTHING;        /* Indicate no longer pending                        */
              break;
 

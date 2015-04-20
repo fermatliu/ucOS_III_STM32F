@@ -10,7 +10,7 @@
 *
 * File    : OS_TMR.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -212,8 +212,7 @@ void  OSTmrCreate (OS_TMR               *p_tmr,
 CPU_BOOLEAN  OSTmrDel (OS_TMR  *p_tmr,
                        OS_ERR  *p_err)
 {
-    OS_ERR       err;
-    CPU_BOOLEAN  success;
+    OS_ERR  err;
 
 
 
@@ -256,31 +255,26 @@ CPU_BOOLEAN  OSTmrDel (OS_TMR  *p_tmr,
              OS_TmrUnlink(p_tmr);                           /* Remove from current wheel spoke                        */
              OS_TmrClr(p_tmr);
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_NONE;
-             success = DEF_TRUE;
-             break;
+            *p_err = OS_ERR_NONE;
+             return (DEF_TRUE);
 
         case OS_TMR_STATE_STOPPED:                          /* Timer has not started or ...                           */
         case OS_TMR_STATE_COMPLETED:                        /* ... timer has completed the ONE-SHOT time              */
              OS_TmrClr(p_tmr);                              /* Clear timer fields                                     */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_NONE;
-             success = DEF_TRUE;
-             break;
-             
+            *p_err = OS_ERR_NONE;
+             return (DEF_TRUE);
+
         case OS_TMR_STATE_UNUSED:                           /* Already deleted                                        */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_INACTIVE;
-             success = DEF_FALSE;
-             break;
+            *p_err = OS_ERR_TMR_INACTIVE;
+             return (DEF_FALSE);
 
         default:
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_INVALID_STATE;
-             success = DEF_FALSE;
-             break;
+            *p_err = OS_ERR_TMR_INVALID_STATE;
+             return (DEF_FALSE);
     }
-    return (success);
 }
 #endif
 
@@ -352,7 +346,7 @@ OS_TICK  OSTmrRemainGet (OS_TMR  *p_tmr,
              p_tmr->Remain = remain;
              OSSchedUnlock(&err);
             *p_err         = OS_ERR_NONE;
-             break;
+             return (remain);
 
         case OS_TMR_STATE_STOPPED:                          /* It's assumed that the timer has not started yet        */
              if (p_tmr->Opt == OS_OPT_TMR_PERIODIC) {
@@ -367,27 +361,23 @@ OS_TICK  OSTmrRemainGet (OS_TMR  *p_tmr,
              p_tmr->Remain = remain;
              OSSchedUnlock(&err);
             *p_err         = OS_ERR_NONE;
-             break;
+             return (remain);
 
         case OS_TMR_STATE_COMPLETED:                        /* Only ONE-SHOT that timed out can be in this state      */
              OSSchedUnlock(&err);
-            *p_err  = OS_ERR_NONE;
-             remain = (OS_TICK)0;
-             break;
+            *p_err = OS_ERR_NONE;
+             return ((OS_TICK)0);
 
         case OS_TMR_STATE_UNUSED:
              OSSchedUnlock(&err);
-            *p_err  = OS_ERR_TMR_INACTIVE;
-             remain = (OS_TICK)0;
-             break;
+            *p_err = OS_ERR_TMR_INACTIVE;
+             return ((OS_TICK)0);
 
         default:
              OSSchedUnlock(&err);
             *p_err = OS_ERR_TMR_INVALID_STATE;
-             remain = (OS_TICK)0;
-             break;
+             return ((OS_TICK)0);
     }
-    return (remain);
 }
 
 /*$PAGE*/
@@ -421,8 +411,7 @@ OS_TICK  OSTmrRemainGet (OS_TMR  *p_tmr,
 CPU_BOOLEAN  OSTmrStart (OS_TMR  *p_tmr,
                          OS_ERR  *p_err)
 {
-    OS_ERR       err;
-    CPU_BOOLEAN  success;
+    OS_ERR  err;
 
 
 
@@ -460,31 +449,26 @@ CPU_BOOLEAN  OSTmrStart (OS_TMR  *p_tmr,
              OS_TmrUnlink(p_tmr);                           /* ... Stop the timer                                     */
              OS_TmrLink(p_tmr, OS_OPT_LINK_DLY);            /* ... Link timer to timer wheel (see Note #1).           */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_NONE;
-             success = DEF_TRUE;
-             break;
+            *p_err = OS_ERR_NONE;
+             return (DEF_TRUE);
 
         case OS_TMR_STATE_STOPPED:                          /* Start the timer                                        */
         case OS_TMR_STATE_COMPLETED:
              OS_TmrLink(p_tmr, OS_OPT_LINK_DLY);            /* ... Link timer to timer wheel (see Note #1).           */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_NONE;
-             success = DEF_TRUE;
-             break;
+            *p_err = OS_ERR_NONE;
+             return (DEF_TRUE);
 
         case OS_TMR_STATE_UNUSED:                           /* Timer not created                                      */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_INACTIVE;
-             success = DEF_FALSE;
-             break;
+            *p_err = OS_ERR_TMR_INACTIVE;
+             return (DEF_FALSE);
 
         default:
              OSSchedUnlock(&err);
             *p_err = OS_ERR_TMR_INVALID_STATE;
-             success = DEF_FALSE;
-             break;
+             return (DEF_FALSE);
     }
-    return (success);
 }
 
 /*$PAGE*/
@@ -611,7 +595,6 @@ CPU_BOOLEAN  OSTmrStop (OS_TMR  *p_tmr,
 {
     OS_TMR_CALLBACK_PTR  p_fnct;
     OS_ERR               err;
-    CPU_BOOLEAN          success;
 
 
 
@@ -676,29 +659,24 @@ CPU_BOOLEAN  OSTmrStop (OS_TMR  *p_tmr,
                      return (DEF_FALSE);
              }
              OSSchedUnlock(&err);
-             success = DEF_TRUE;
-             break;
+             return (DEF_TRUE);
 
         case OS_TMR_STATE_COMPLETED:                                  /* Timer has already completed the ONE-SHOT or  */
         case OS_TMR_STATE_STOPPED:                                    /* ... timer has not started yet.               */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_STOPPED;
-             success = DEF_TRUE;
-             break;
+            *p_err = OS_ERR_TMR_STOPPED;
+             return (DEF_TRUE);
 
         case OS_TMR_STATE_UNUSED:                                     /* Timer was not created                        */
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_INACTIVE;
-             success = DEF_FALSE;
-             break;
+            *p_err = OS_ERR_TMR_INACTIVE;
+             return (DEF_FALSE);
 
         default:
              OSSchedUnlock(&err);
-            *p_err   = OS_ERR_TMR_INVALID_STATE;
-             success = DEF_FALSE;
-             break;
+            *p_err = OS_ERR_TMR_INVALID_STATE;
+             return (DEF_FALSE);
     }
-    return (success);
 }
 
 /*$PAGE*/

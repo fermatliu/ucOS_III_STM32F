@@ -10,7 +10,7 @@
 *
 * File    : OS_PEND_MULTI.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -192,8 +192,7 @@ OS_OBJ_QTY  OSPendMulti (OS_PEND_DATA  *p_pend_data_tbl,
             return ((OS_OBJ_QTY)0);
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
                                                             /* ------ NO OBJECT READY, PEND ON MULTIPLE OBJECTS ----- */
     OS_PendMultiWait(p_pend_data_tbl,                       /* Suspend task until object posted or timeout occurs     */
                      tbl_size,

@@ -10,7 +10,7 @@
 *
 * File    : OS_TIME.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -388,7 +388,7 @@ void  OSTimeDlyResume (OS_TCB  *p_tcb,
              break;
 
         case OS_TASK_STATE_DLY:
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              p_tcb->TaskState = OS_TASK_STATE_RDY;
              OS_TickListRemove(p_tcb);                      /* Remove task from tick list                             */
              OS_RdyListInsert(p_tcb);                       /* Add to ready list                                      */
@@ -412,7 +412,7 @@ void  OSTimeDlyResume (OS_TCB  *p_tcb,
              break;
 
         case OS_TASK_STATE_DLY_SUSPENDED:
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              p_tcb->TaskState = OS_TASK_STATE_SUSPENDED;
              OS_TickListRemove(p_tcb);                      /* Remove task from tick list                             */
              OS_CRITICAL_EXIT_NO_SCHED();

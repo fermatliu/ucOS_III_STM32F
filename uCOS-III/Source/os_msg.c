@@ -10,7 +10,7 @@
 *
 * File    : OS_MSG.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -42,6 +42,54 @@ const  CPU_CHAR  *os_msg__c = "$Id: $";
 /*$PAGE*/
 /*
 ************************************************************************************************************************
+*                                           CREATE A LINKED LIST OF 'OS_MSG'
+*
+* Description: This function is called to create a singly linked list of OS_MSGs which is used as a pool of available
+*              OS_MSGs to be used for sending messages.
+*
+* Arguments  : p_msg        is a pointer to the base address of an array of OS_MSG and should be declared as follows:
+*              -----
+*                               OS_MSG  MyMsgTbl[size];
+*
+*              size         is the size of the above array
+*
+* Returns    : none
+*
+* Note(s)    : 1) This function is INTERNAL to uC/OS-III and your application MUST NOT call it.
+************************************************************************************************************************
+*/
+
+void  OS_MsgPoolCreate (OS_MSG      *p_msg,
+                        OS_MSG_QTY   size)
+{
+    OS_MSG      *p_msg1;
+    OS_MSG      *p_msg2;
+    OS_MSG_QTY   i;
+    OS_MSG_QTY   loops;
+
+
+
+    p_msg1 = p_msg;
+    p_msg2 = p_msg;
+    p_msg2++;
+    loops  = size - 1u;
+    for (i = 0u; i < loops; i++) {                          /* Init. list of free OS_MSGs                             */
+        p_msg1->NextPtr = p_msg2;
+        p_msg1->MsgPtr  = (void      *)0;
+        p_msg1->MsgSize = (OS_MSG_SIZE)0u;
+        p_msg1->MsgTS   = (CPU_TS     )0u;
+        p_msg1++;
+        p_msg2++;
+    }
+    p_msg1->NextPtr = (OS_MSG    *)0;                       /* Last OS_MSG                                            */
+    p_msg1->MsgPtr  = (void      *)0;
+    p_msg1->MsgSize = (OS_MSG_SIZE)0u;
+    p_msg1->MsgTS   = (CPU_TS     )0u;
+}
+
+/*$PAGE*/
+/*
+************************************************************************************************************************
 *                                            INITIALIZE THE POOL OF 'OS_MSG'
 *
 * Description: This function is called by OSInit() to initialize the free list of OS_MSGs.
@@ -60,13 +108,6 @@ const  CPU_CHAR  *os_msg__c = "$Id: $";
 
 void  OS_MsgPoolInit (OS_ERR  *p_err)
 {
-    OS_MSG      *p_msg1;
-    OS_MSG      *p_msg2;
-    OS_MSG_QTY   i;
-    OS_MSG_QTY   loops;
-
-
-
 #ifdef OS_SAFETY_CRITICAL
     if (p_err == (OS_ERR *)0) {
         OS_SAFETY_CRITICAL_EXCEPTION();
@@ -85,23 +126,8 @@ void  OS_MsgPoolInit (OS_ERR  *p_err)
     }
 #endif
 
-    p_msg1 = OSCfg_MsgPoolBasePtr;
-    p_msg2 = OSCfg_MsgPoolBasePtr;
-    p_msg2++;
-    loops  = OSCfg_MsgPoolSize - 1u;
-    for (i = 0u; i < loops; i++) {                          /* Init. list of free OS_MSGs                             */
-        p_msg1->NextPtr = p_msg2;
-        p_msg1->MsgPtr  = (void      *)0;
-        p_msg1->MsgSize = (OS_MSG_SIZE)0u;
-        p_msg1->MsgTS   = (CPU_TS     )0u;
-        p_msg1++;
-        p_msg2++;
-    }
-    p_msg1->NextPtr = (OS_MSG    *)0;                       /* Last OS_MSG                                            */
-    p_msg1->MsgPtr  = (void      *)0;
-    p_msg1->MsgSize = (OS_MSG_SIZE)0u;
-    p_msg1->MsgTS   = (CPU_TS     )0u;
-
+    OS_MsgPoolCreate(OSCfg_MsgPoolBasePtr,
+                     OSCfg_MsgPoolSize);
     OSMsgPool.NextPtr    =  OSCfg_MsgPoolBasePtr;
     OSMsgPool.NbrFree    =  OSCfg_MsgPoolSize;
     OSMsgPool.NbrUsed    = (OS_MSG_QTY)0;
@@ -217,8 +243,8 @@ void  *OS_MsgQGet (OS_MSG_Q     *p_msg_q,
     }
 #endif
 
-    if (p_msg_q->NbrEntries == (OS_MSG_QTY)0) {             /* Is the queue empty?                                    */
-       *p_msg_size = (OS_MSG_SIZE)0;                        /* Yes                                                    */
+    if (p_msg_q->NbrEntries == (OS_MSG_QTY)0) {
+       *p_msg_size = (OS_MSG_SIZE)0;
         if (p_ts != (CPU_TS *)0) {
            *p_ts  = (CPU_TS  )0;
         }
@@ -226,27 +252,23 @@ void  *OS_MsgQGet (OS_MSG_Q     *p_msg_q,
         return ((void *)0);
     }
 
-    p_msg           = p_msg_q->OutPtr;                      /* No, get the next message to extract from the queue     */
+    p_msg           = p_msg_q->OutPtr;
     p_void          = p_msg->MsgPtr;
    *p_msg_size      = p_msg->MsgSize;
     if (p_ts != (CPU_TS *)0) {
        *p_ts  = p_msg->MsgTS;
     }
-
-    p_msg_q->OutPtr = p_msg->NextPtr;                       /* Point to next message to extract                       */
-
-    if (p_msg_q->OutPtr == (OS_MSG *)0) {                   /* Are there any more messages in the queue?              */
-        p_msg_q->InPtr      = (OS_MSG   *)0;                /* No                                                     */
+    p_msg_q->OutPtr = p_msg->NextPtr;
+    if (p_msg_q->OutPtr == (OS_MSG *)0) {
+        p_msg_q->InPtr      = (OS_MSG   *)0;
         p_msg_q->NbrEntries = (OS_MSG_QTY)0;
     } else {
-        p_msg_q->NbrEntries--;                              /* Yes, One less message in the queue                     */
+        p_msg_q->NbrEntries--;
     }
-
     p_msg->NextPtr    = OSMsgPool.NextPtr;                  /* Return message control block to free list              */
     OSMsgPool.NextPtr = p_msg;
     OSMsgPool.NbrFree++;
     OSMsgPool.NbrUsed--;
-
    *p_err             = OS_ERR_NONE;
     return (p_void);
 }
@@ -320,20 +342,18 @@ void  OS_MsgQPut (OS_MSG_Q     *p_msg_q,
     if (OSMsgPool.NbrUsedMax < OSMsgPool.NbrUsed) {
         OSMsgPool.NbrUsedMax = OSMsgPool.NbrUsed;
     }
-
     if (p_msg_q->NbrEntries == (OS_MSG_QTY)0) {             /* Is this first message placed in the queue?             */
         p_msg_q->InPtr         = p_msg;                     /* Yes                                                    */
         p_msg_q->OutPtr        = p_msg;
         p_msg_q->NbrEntries    = (OS_MSG_QTY)1;
-        p_msg->NextPtr         = (OS_MSG *)0;
-    } else {                                                /* No                                                     */
-        if ((opt & OS_OPT_POST_LIFO) == OS_OPT_POST_FIFO) { /* Is it FIFO or LIFO?                                    */
-            p_msg_in           = p_msg_q->InPtr;            /* FIFO, add to the head                                  */
+    } else {
+        if ((opt & OS_OPT_POST_LIFO) == OS_OPT_POST_FIFO) { /* Assume FIFO if not LIFO                                */
+            p_msg_in           = p_msg_q->InPtr;            /* FIFO                                                   */
             p_msg_in->NextPtr  = p_msg;
-            p_msg_q->InPtr     = p_msg;
             p_msg->NextPtr     = (OS_MSG *)0;
+            p_msg_q->InPtr     = p_msg;
         } else {
-            p_msg->NextPtr     = p_msg_q->OutPtr;           /* LIFO, add to the tail                                  */
+            p_msg->NextPtr     = p_msg_q->OutPtr;           /* LIFO                                                   */
             p_msg_q->OutPtr    = p_msg;
         }
         p_msg_q->NbrEntries++;

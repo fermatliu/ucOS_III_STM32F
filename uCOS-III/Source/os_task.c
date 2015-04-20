@@ -10,7 +10,7 @@
 *
 * File    : OS_TASK.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -745,8 +745,8 @@ void  *OSTaskQPend (OS_TICK       timeout,
             return ((void *)0);
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();
+
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
     OS_Pend((OS_PEND_DATA *)0,                              /* Block task pending on Message                          */
             (OS_PEND_OBJ  *)0,
             (OS_STATE      )OS_TASK_PEND_ON_TASK_Q,
@@ -876,7 +876,7 @@ CPU_BOOLEAN  OSTaskQPendAbort (OS_TCB  *p_tcb,
         return (DEF_FALSE);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     ts = OS_TS_GET();                                       /* Get timestamp of when the abort occurred               */
     OS_PendAbort((OS_PEND_OBJ *)0,                          /* Abort the pend                                         */
                  p_tcb,
@@ -1328,8 +1328,8 @@ OS_SEM_CTR  OSTaskSemPend (OS_TICK   timeout,
             return ((OS_SEM_CTR)0);
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();                           
+
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
     OS_Pend((OS_PEND_DATA *)0,                              /* Block task pending on Signal                           */
             (OS_PEND_OBJ  *)0,
             (OS_STATE      )OS_TASK_PEND_ON_TASK_SEM,
@@ -2230,7 +2230,7 @@ void  OS_TaskResume (OS_TCB  *p_tcb,
              break;
 
         case OS_TASK_STATE_SUSPENDED:
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              p_tcb->SuspendCtr--;
              if (p_tcb->SuspendCtr == (OS_NESTING_CTR)0) {
                  p_tcb->TaskState = OS_TASK_STATE_RDY;
@@ -2506,7 +2506,7 @@ void   OS_TaskSuspend (OS_TCB  *p_tcb,
    *p_err = OS_ERR_NONE;
     switch (p_tcb->TaskState) {
         case OS_TASK_STATE_RDY:
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              p_tcb->TaskState  =  OS_TASK_STATE_SUSPENDED;
              p_tcb->SuspendCtr = (OS_NESTING_CTR)1;
              OS_RdyListRemove(p_tcb);

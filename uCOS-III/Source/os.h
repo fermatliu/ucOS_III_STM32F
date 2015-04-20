@@ -8,7 +8,7 @@
 *
 * File    : OS.H
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -42,7 +42,7 @@
 ************************************************************************************************************************
 */
 
-#define  OS_VERSION  30301u                       /* Version of uC/OS-III (Vx.yy.zz mult. by 10000)                   */
+#define  OS_VERSION  30300u                       /* Version of uC/OS-III (Vx.yy.zz mult. by 10000)                   */
 
 /*
 ************************************************************************************************************************
@@ -96,7 +96,7 @@ extern "C" {
              CPU_CRITICAL_EXIT();                                  \
          } while (0)
                                                                  /* Lock the scheduler but re-enable interrupts       */
-#define  OS_CRITICAL_ENTER_CPU_EXIT()                              \
+#define  OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT()                     \
          do {                                                      \
              OSSchedLockNestingCtr++;                              \
                                                                    \
@@ -140,7 +140,7 @@ extern "C" {
 
 #define  OS_CRITICAL_ENTER()                    CPU_CRITICAL_ENTER()
 
-#define  OS_CRITICAL_ENTER_CPU_EXIT()
+#define  OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT()
 
 #define  OS_CRITICAL_EXIT()                     CPU_CRITICAL_EXIT()
 
@@ -161,7 +161,7 @@ extern "C" {
 #endif
 
 
-#define  OS_PRIO_TBL_SIZE          ((OS_CFG_PRIO_MAX - 1u) / (DEF_INT_CPU_NBR_BITS) + 1u)
+#define  OS_PRIO_TBL_SIZE          (((OS_CFG_PRIO_MAX - 1u) / DEF_INT_CPU_NBR_BITS) + 1u)
 
 #define  OS_MSG_EN                 (((OS_CFG_TASK_Q_EN > 0u) || (OS_CFG_Q_EN > 0u)) ? 1u : 0u)
 
@@ -2010,6 +2010,9 @@ void          OS_IntQTask               (void                  *p_arg);
 #endif
 
 /* ----------------------------------------------- MESSAGE MANAGEMENT ----------------------------------------------- */
+
+void          OS_MsgPoolCreate          (OS_MSG                *p_msg,
+                                         OS_MSG_QTY             size);
 
 void          OS_MsgPoolInit            (OS_ERR                *p_err);
 

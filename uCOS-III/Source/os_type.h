@@ -8,7 +8,7 @@
 *
 * File    : OS_TYPE.H
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------

@@ -10,7 +10,7 @@
 *
 * File    : OS_Q.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -236,7 +236,7 @@ OS_OBJ_QTY  OSQDel (OS_Q    *p_q,
              break;
 
         case OS_OPT_DEL_ALWAYS:                             /* Always delete the message queue                        */
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              ts = OS_TS_GET();                              /* Get local time stamp so all tasks get the same time    */
              while (cnt > 0u) {                             /* Remove all tasks from the pend list                    */
                  p_pend_data = p_pend_list->HeadPtr;
@@ -460,8 +460,8 @@ void  *OSQPend (OS_Q         *p_q,
             return ((void *)0);
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();
+
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
     OS_Pend(&pend_data,                                     /* Block task pending on Message Queue                    */
             (OS_PEND_OBJ *)((void *)p_q),
             OS_TASK_PEND_ON_Q,
@@ -611,7 +611,7 @@ OS_OBJ_QTY  OSQPendAbort (OS_Q    *p_q,
         return ((OS_OBJ_QTY)0u);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     nbr_tasks = 0u;
     ts        = OS_TS_GET();                                /* Get local time stamp so all tasks get the same time    */
     while (p_pend_list->NbrEntries > (OS_OBJ_QTY)0u) {

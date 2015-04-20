@@ -10,7 +10,7 @@
 *
 * File    : OS_SEM.C
 * By      : JJL
-* Version : V3.03.01
+* Version : V3.03.00
 *
 * LICENSING TERMS:
 * ---------------
@@ -232,7 +232,7 @@ OS_OBJ_QTY  OSSemDel (OS_SEM  *p_sem,
              break;
 
         case OS_OPT_DEL_ALWAYS:                             /* Always delete the semaphore                            */
-             OS_CRITICAL_ENTER_CPU_EXIT();
+             OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
              ts = OS_TS_GET();                              /* Get local time stamp so all tasks get the same time    */
              while (cnt > 0u) {                             /* Remove all tasks on the pend list                      */
                  p_pend_data = p_pend_list->HeadPtr;
@@ -384,8 +384,8 @@ OS_SEM_CTR  OSSemPend (OS_SEM   *p_sem,
             return ((OS_SEM_CTR)0);
         }
     }
-                                                            /* Lock the scheduler/re-enable interrupts                */
-    OS_CRITICAL_ENTER_CPU_EXIT();
+
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();                  /* Lock the scheduler/re-enable interrupts                */
     OS_Pend(&pend_data,                                     /* Block task pending on Semaphore                        */
             (OS_PEND_OBJ *)((void *)p_sem),
             OS_TASK_PEND_ON_SEM,
@@ -527,7 +527,7 @@ OS_OBJ_QTY  OSSemPendAbort (OS_SEM  *p_sem,
         return ((OS_OBJ_QTY)0u);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     nbr_tasks = 0u;
     ts        = OS_TS_GET();                                /* Get local time stamp so all tasks get the same time    */
     while (p_pend_list->NbrEntries > (OS_OBJ_QTY)0u) {
@@ -935,7 +935,7 @@ OS_SEM_CTR  OS_SemPost (OS_SEM  *p_sem,
         return (ctr);
     }
 
-    OS_CRITICAL_ENTER_CPU_EXIT();
+    OS_CRITICAL_ENTER_CPU_CRITICAL_EXIT();
     if ((opt & OS_OPT_POST_ALL) != (OS_OPT)0) {             /* Post message to all tasks waiting?                     */
         cnt = p_pend_list->NbrEntries;                      /* Yes                                                    */
     } else {
